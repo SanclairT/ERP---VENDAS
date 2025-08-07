@@ -1,0 +1,2847 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Vendas e Marketing</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            color: #2c3e50;
+        }
+
+        /* Tela de Login */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .login-header {
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .login-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .login-group label {
+            color: #34495e;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .login-group input,
+        .login-group select {
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .login-group input:focus,
+        .login-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(-1px);
+        }
+
+        /* User Info */
+        .user-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1001;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            text-transform: capitalize;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 10px rgba(231, 76, 60, 0.3);
+        }
+
+        /* Notificações */
+        .notification-badge {
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .pending-updates {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #856404;
+        }
+
+        .pending-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pending-item {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pending-info {
+            flex: 1;
+        }
+
+        .pending-type {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .pending-details {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-top: 2px;
+        }
+
+        .btn-approve {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-approve:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 10px rgba(39, 174, 96, 0.3);
+        }
+
+        /* Sistema principal - mantenha todos os estilos originais */
+        .sidebar {
+            width: 250px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            height: 100vh;
+            position: fixed;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 25px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header h2 {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #34495e;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .menu-item i {
+            margin-right: 12px;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-item:hover {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+
+        .menu-item.active {
+            background: linear-gradient(90deg, rgba(52, 152, 219, 0.2), transparent);
+            color: #3498db;
+            border-left: 4px solid #3498db;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 100%;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 25px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            border-radius: 2px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            color: #34495e;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px 14px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Campo opcional styling */
+        .form-group.optional label::after {
+            content: ' (opcional)';
+            color: #7f8c8d;
+            font-weight: normal;
+            font-size: 0.8rem;
+        }
+
+        .commission-display {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 12px;
+        }
+
+        .commission-hidden {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 12px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            padding: 7px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-delete:hover {
+            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-relatorio {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            margin-left: 12px;
+        }
+
+        .btn-relatorio:hover {
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-link {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            padding: 7px 12px;
+            font-size: 0.85rem;
+            margin-left: 5px;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            padding: 7px 12px;
+            font-size: 0.85rem;
+            margin-right: 5px;
+        }
+
+        .btn-edit:hover {
+            box-shadow: 0 6px 15px rgba(243, 156, 18, 0.3);
+        }
+
+        .btn-mkt-edit {
+            background: linear-gradient(135deg, #1abc9c, #16a085);
+            padding: 7px 12px;
+            font-size: 0.85rem;
+            margin-right: 5px;
+        }
+
+        .btn-mkt-edit:hover {
+            box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
+        }
+
+        .btn-pdf {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            padding: 7px 12px;
+            font-size: 0.85rem;
+            margin-left: 5px;
+        }
+
+        .btn-pdf:hover {
+            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .resumo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .resumo-card {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .resumo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-color: #3498db;
+        }
+
+        .resumo-titulo {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .resumo-valor {
+            color: #27ae60;
+            font-size: 1.7rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .resumo-detalhes {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+
+        .resumo-detalhes span {
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+
+        .tab:hover:not(.active) {
+            color: #34495e;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            min-width: 100%;
+        }
+
+        th {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            color: white;
+            padding: 15px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 0.9rem;
+        }
+
+        tr.venda:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr.venda:hover {
+            background: #e3f2fd;
+            transform: scale(1.01);
+            transition: all 0.3s ease;
+        }
+
+        tr.marketing:nth-child(even) {
+            background: #f0f8f5;
+        }
+
+        tr.marketing:hover {
+            background: #e0f2e9;
+            transform: scale(1.01);
+            transition: all 0.3s ease;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            padding: 30px;
+            font-size: 1rem;
+        }
+
+        .boleto-group {
+            margin-bottom: 8px;
+        }
+
+        .add-boleto {
+            background: #f8f9fa;
+            border: 1px dashed #e9ecef;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .add-boleto:hover {
+            background: #e9ecef;
+        }
+
+        .remove-boleto {
+            color: #e74c3c;
+            cursor: pointer;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+
+        .link-display {
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .link-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .relatorios-container {
+            margin-top: 20px;
+        }
+
+        .relatorio-item {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .relatorio-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .relatorio-info {
+            flex: 1;
+        }
+
+        .relatorio-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .relatorio-date {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+
+        .relatorio-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Configurações - Cadastro de Usuários */
+        .config-section {
+            display: none;
+        }
+
+        .config-section.active {
+            display: block;
+        }
+
+        .config-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .config-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .config-tab.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+
+        .config-tab:hover:not(.active) {
+            color: #34495e;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .users-table th {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .users-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .users-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .users-table tr:hover {
+            background-color: #e3f2fd;
+        }
+
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+                overflow: hidden;
+            }
+            
+            .sidebar-header h2,
+            .menu-item span {
+                display: none;
+            }
+            
+            .menu-item {
+                justify-content: center;
+                padding: 15px;
+            }
+            
+            .menu-item i {
+                margin-right: 0;
+                font-size: 1.3rem;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.7rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            .resumo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .relatorio-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .relatorio-actions {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .login-box {
+                padding: 30px 20px;
+            }
+
+            .user-info {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 20px;
+            }
+
+            .config-tabs {
+                flex-direction: column;
+            }
+
+            .config-tab {
+                padding: 10px;
+                border-bottom: none;
+                border-left: 3px solid transparent;
+            }
+
+            .config-tab.active {
+                border-bottom: none;
+                border-left-color: #3498db;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>🚀 Login Sistema</h1>
+                <p>Vendas & Marketing</p>
+            </div>
+            <form class="login-form" id="loginForm">
+                <div class="login-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="login-group">
+                    <label for="loginSenha">Senha</label>
+                    <input type="password" id="loginSenha" required>
+                </div>
+                <div class="login-group">
+                    <label for="loginPerfil">Perfil</label>
+                    <select id="loginPerfil" required>
+                        <option value="">Selecione...</option>
+                        <option value="admin">Administrador</option>
+                        <option value="financeiro">Financeiro</option>
+                        <option value="vendedora">Vendedora</option>
+                        <option value="operacional">Operacional</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-login">🔐 Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Informações do Usuário -->
+    <div class="user-info" id="userInfo" style="display: none;">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <div class="user-details">
+            <div class="user-name" id="userName">Usuário</div>
+            <div class="user-role" id="userRole">admin</div>
+        </div>
+        <button class="btn-logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
+    </div>
+
+    <!-- Menu Lateral -->
+    <div class="sidebar" id="sidebar" style="display: none;">
+        <div class="sidebar-header">
+            <h2>Vendas & Marketing</h2>
+        </div>
+        <div class="sidebar-menu">
+            <a href="#" class="menu-item active" onclick="filtrarTabela('dashboard')">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+                <div class="notification-badge" id="notificationBadge" style="display: none;">0</div>
+            </a>
+            <a href="#" class="menu-item" id="menuVendas" onclick="filtrarTabela('vendas')">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Registro de Vendas</span>
+            </a>
+            <a href="#" class="menu-item" id="menuMarketing" onclick="filtrarTabela('marketing')">
+                <i class="fas fa-bullhorn"></i>
+                <span>Pacote de Marketing</span>
+            </a>
+            <a href="#" class="menu-item" onclick="filtrarTabela('relatorios')">
+                <i class="fas fa-file-excel"></i>
+                <span>Relatórios</span>
+            </a>
+            <a href="#" class="menu-item" onclick="mostrarHistorico()">
+                <i class="fas fa-history"></i>
+                <span>Histórico Clientes</span>
+            </a>
+            <a href="#" class="menu-item" onclick="mostrarConfiguracoes()">
+                <i class="fas fa-cog"></i>
+                <span>Configurações</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="main-content" id="mainContent" style="display: none;">
+        <div class="container">
+            <div class="header">
+                <h1>🚀 Sistema de Vendas</h1>
+                <p>Controle completo de vendas e comissões de marketing</p>
+            </div>
+            
+            <div class="content">
+                <!-- Atualizações Pendentes (apenas para Admin/Financeiro) -->
+                <div class="pending-updates" id="pendingUpdates" style="display: none;">
+                    <div class="pending-title">
+                        <i class="fas fa-bell"></i>
+                        Atualizações Pendentes
+                    </div>
+                    <div id="pendingList">
+                        <!-- Items serão inseridos dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Parte 1: Informações da Venda -->
+                <div class="section" id="formularioVenda">
+                    <h2 class="section-title">🧾 Informações da Venda</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="pedido">Número do Pedido (6 dígitos)</label>
+                            <input type="text" id="pedido" maxlength="6" pattern="\d*" required>
+                        </div>
+                        <div class="form-group optional">
+                            <label for="nota">Número da Nota Fiscal (4 dígitos)</label>
+                            <input type="text" id="nota" maxlength="4" pattern="\d*">
+                        </div>
+                        <div class="form-group">
+                            <label for="valor">Valor Total do Produto</label>
+                            <input type="number" id="valor" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="produto">Descrição do Produto</label>
+                            <textarea id="produto" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="nomeCliente">Nome do Cliente</label>
+                            <input type="text" id="nomeCliente" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pagamento">Forma de Pagamento</label>
+                            <select id="pagamento" required>
+                                <option value="">Selecione...</option>
+                                <option value="PIX">PIX</option>
+                                <option value="Fatura Unificada">Fatura Unificada</option>
+                                <option value="Cartão">Cartão de Crédito</option>
+                            </select>
+                        </div>
+                        <div class="form-group hidden" id="parcelasGroup">
+                            <label for="parcelas">💳 Número de Parcelas</label>
+                            <select id="parcelas">
+                                <option value="1">1x (à vista)</option>
+                                <option value="2">2x sem juros</option>
+                                <option value="3">3x sem juros</option>
+                                <option value="4">4x sem juros</option>
+                            </select>
+                        </div>
+                        <div class="form-group hidden" id="boletosGroup">
+                            <label>🔗 Links de Boletos (Fatura Unificada)</label>
+                            <div id="boletosContainer">
+                                <div class="boleto-group">
+                                    <input type="url" class="linkBoleto" placeholder="https://exemplo.com/boleto1">
+                                </div>
+                            </div>
+                            <div class="add-boleto" id="addBoleto" style="display: none;">
+                                + Adicionar outro boleto (máx. 3)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="vendedora">Vendedora</label>
+                            <select id="vendedora" required>
+                                <option value="">Selecione...</option>
+                                <option value="Mayra">Mayra</option>
+                                <option value="Liliane">Liliane</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataPagamento">📅 Data de Pagamento</label>
+                            <input type="date" id="dataPagamento" required>
+                        </div>
+                    </div>
+                    <div id="comissaoVendaContainer">
+                        <div class="commission-display" id="comissaoVenda">
+                            Comissão da Venda: R$ 0,00 (3%)
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin: 25px 0;">
+                        <button class="btn" onclick="salvarVenda()">💰 Salvar Venda</button>
+                    </div>
+                </div>
+
+                <!-- Parte 2: Pacote de Marketing -->
+                <div class="section" id="formularioMarketing">
+                    <h2 class="section-title">📦 Pacote de Marketing</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="numeroPedidoMkt">Número do Pedido (6 dígitos)</label>
+                            <input type="text" id="numeroPedidoMkt" maxlength="6" pattern="\d*" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="nomeClienteMkt">Nome do Cliente</label>
+                            <input type="text" id="nomeClienteMkt" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="mesReferencia">Mês de Referência</label>
+                            <select id="mesReferencia" required>
+                                <option value="">Selecione...</option>
+                                <option value="Janeiro">Janeiro</option>
+                                <option value="Fevereiro">Fevereiro</option>
+                                <option value="Março">Março</option>
+                                <option value="Abril">Abril</option>
+                                <option value="Maio">Maio</option>
+                                <option value="Junho">Junho</option>
+                                <option value="Julho">Julho</option>
+                                <option value="Agosto">Agosto</option>
+                                <option value="Setembro">Setembro</option>
+                                <option value="Outubro">Outubro</option>
+                                <option value="Novembro">Novembro</option>
+                                <option value="Dezembro">Dezembro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="valorMarketing">Valor do Pacote Marketing</label>
+                            <input type="number" id="valorMarketing" step="0.01" min="0" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="pacote">Tipo de Pacote</label>
+                            <select id="pacote" required onchange="atualizarValorMarketing()">
+                                <option value="">Selecione...</option>
+                                <option value="Bronze">Bronze</option>
+                                <option value="Prata">Prata</option>
+                                <option value="Ouro">Ouro</option>
+                                <option value="Diamante">Diamante</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipoComissaoMkt">Tipo de Comissão do Marketing</label>
+                            <select id="tipoComissaoMkt" required>
+                                <option value="">Selecione...</option>
+                                <option value="mes1">Mês 1 (início) - 10%</option>
+                                <option value="continuidade">Meses seguintes (continuidade) - 5%</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="comissaoMarketingContainer">
+                        <div class="commission-display" id="comissaoMarketing">
+                            Comissão do Marketing: R$ 0,00 (0%) - Mayra: R$ 0,00 | Liliane: R$ 0,00
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin: 25px 0;">
+                        <button class="btn" onclick="salvarMarketing()">📦 Salvar Marketing</button>
+                    </div>
+                </div>
+
+                <div id="alertContainer"></div>
+
+                <!-- Resumo Financeiro -->
+                <div class="section" id="resumoFinanceiro">
+                    <h2 class="section-title">📊 Resumo Financeiro</h2>
+                    <div class="resumo-grid">
+                        <div class="resumo-card">
+                            <div class="resumo-titulo">💰 Total em Vendas</div>
+                            <div class="resumo-valor" id="totalVendas">R$ 0,00</div>
+                        </div>
+                        <div class="resumo-card" id="resumoMayra">
+                            <div class="resumo-titulo">👩‍💼 Comissões Mayra</div>
+                            <div class="resumo-valor" id="comissaoTotalMayra">R$ 0,00</div>
+                            <div class="resumo-detalhes">
+                                <small>Vendas: <span id="comissaoVendaMayra">R$ 0,00</span> | Marketing: <span id="comissaoMktMayra">R$ 0,00</span></small>
+                            </div>
+                        </div>
+                        <div class="resumo-card" id="resumoLiliane">
+                            <div class="resumo-titulo">👩‍💼 Comissões Liliane</div>
+                            <div class="resumo-valor" id="comissaoTotalLiliane">R$ 0,00</div>
+                            <div class="resumo-detalhes">
+                                <small>Vendas: <span id="comissaoVendaLiliane">R$ 0,00</span> | Marketing: <span id="comissaoMktLiliane">R$ 0,00</span></small>
+                            </div>
+                        </div>
+                        <div class="resumo-card">
+                            <div class="resumo-titulo">📈 Total Comissões</div>
+                            <div class="resumo-valor" id="totalComissoes">R$ 0,00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parte 3: Tabela de Registros -->
+                <div class="section" id="tabelaRegistrosSection">
+                    <h2 class="section-title">📋 Registros</h2>
+                    
+                    <div class="tabs" id="tabsRegistros">
+                        <div class="tab active" onclick="filtrarTabela('todos')">Todos</div>
+                        <div class="tab" onclick="filtrarTabela('vendas')">Vendas</div>
+                        <div class="tab" onclick="filtrarTabela('marketing')">Marketing</div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="tabelaRegistros">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Pedido</th>
+                                    <th>Nota</th>
+                                    <th>Cliente</th>
+                                    <th>Produto</th>
+                                    <th>Valor Total</th>
+                                    <th>Pagamento</th>
+                                    <th>Parcelas</th>
+                                    <th>Vendedora</th>
+                                    <th class="commission-column">Comissão Venda</th>
+                                    <th>Valor MKT</th>
+                                    <th>Pacote</th>
+                                    <th>Tipo Comissão MKT</th>
+                                    <th class="commission-column">Comissão MKT Total</th>
+                                    <th class="commission-column">Mayra MKT</th>
+                                    <th class="commission-column">Liliane MKT</th>
+                                    <th>Boletos</th>
+                                    <th>Data</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaBody">
+                                <tr>
+                                    <td colspan="19" class="no-data">Nenhum registro encontrado</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Parte 4: Relatórios -->
+                <div class="section" id="relatoriosSection">
+                    <h2 class="section-title">📊 Relatórios</h2>
+                    
+                    <div class="relatorios-container" id="relatoriosContainer">
+                        <div class="no-data">Nenhum relatório gerado ainda</div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 25px;">
+                        <button class="btn btn-relatorio" onclick="gerarRelatorio()">📄 Gerar Novo Relatório</button>
+                    </div>
+                </div>
+
+                <!-- Parte 5: Histórico de Pacotes por Cliente -->
+                <div class="section" id="historicoMarketingSection" style="display: none;">
+                    <h2 class="section-title">📅 Histórico de Pacotes por Cliente</h2>
+                    
+                    <div class="form-group">
+                        <label for="filtroCliente">Filtrar por Cliente:</label>
+                        <input type="text" id="filtroCliente" placeholder="Digite o nome do cliente">
+                        <button class="btn" onclick="filtrarHistorico()">🔍 Filtrar</button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="tabelaHistorico">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Pacote</th>
+                                    <th>Mês Referência</th>
+                                    <th>Valor</th>
+                                    <th>Data Registro</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaHistoricoBody">
+                                <tr>
+                                    <td colspan="5" class="no-data">Nenhum registro encontrado</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Parte 6: Configurações -->
+                <div class="section" id="configuracoesSection" style="display: none;">
+                    <h2 class="section-title">⚙️ Configurações</h2>
+                    
+                    <div class="config-tabs">
+                        <div class="config-tab active" onclick="mostrarConfigTab('usuarios')">Usuários</div>
+                        <div class="config-tab" onclick="mostrarConfigTab('parametros')">Parâmetros</div>
+                    </div>
+                    
+                    <!-- Cadastro de Usuários -->
+                    <div class="config-section active" id="configUsuarios">
+                        <h3 class="section-title">👥 Cadastro de Usuários</h3>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="novoUsuarioNome">Nome</label>
+                                <input type="text" id="novoUsuarioNome" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="novoUsuarioEmail">Email</label>
+                                <input type="email" id="novoUsuarioEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="novoUsuarioSenha">Senha</label>
+                                <input type="password" id="novoUsuarioSenha" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="novoUsuarioPerfil">Perfil</label>
+                                <select id="novoUsuarioPerfil" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="financeiro">Financeiro</option>
+                                    <option value="vendedora">Vendedora</option>
+                                    <option value="operacional">Operacional</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; margin: 20px 0;">
+                            <button class="btn" onclick="cadastrarUsuario()">➕ Cadastrar Usuário</button>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="users-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>Perfil</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaUsuarios">
+                                    <!-- Dados serão inseridos dinamicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Parâmetros do Sistema -->
+                    <div class="config-section" id="configParametros">
+                        <h3 class="section-title">⚙️ Parâmetros do Sistema</h3>
+                        <p>Configurações avançadas do sistema serão exibidas aqui.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let registros = [];
+        let relatorios = [];
+        let historicoMarketing = [];
+        let filtroAtual = 'dashboard';
+        let usuarioLogado = null;
+        
+        // Simulação de usuários cadastrados (em ambiente real, virá do backend)
+        let usuarios = [
+            { id: 1, email: 'admin@sistema.com', senha: '123456', perfil: 'admin', nome: 'Administrador' },
+            { id: 2, email: 'financeiro@sistema.com', senha: '123456', perfil: 'financeiro', nome: 'Setor Financeiro' },
+            { id: 3, email: 'mayra@sistema.com', senha: '123456', perfil: 'vendedora', nome: 'Mayra' },
+            { id: 4, email: 'liliane@sistema.com', senha: '123456', perfil: 'vendedora', nome: 'Liliane' },
+            { id: 5, email: 'operacional@sistema.com', senha: '123456', perfil: 'operacional', nome: 'Operacional' }
+        ];
+
+        // Variável para controlar se estamos editando
+        let editandoId = null;
+        let editandoTipo = null;
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Definir data de hoje como padrão
+            document.getElementById('dataPagamento').value = new Date().toISOString().split('T')[0];
+            
+            // Configurar event listeners
+            configurarEventListeners();
+            
+            // Verificar se há usuário logado (simulação)
+            verificarLogin();
+        });
+
+        function configurarEventListeners() {
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                realizarLogin();
+            });
+
+            // Formulário de vendas
+            document.getElementById('pagamento').addEventListener('change', function() {
+                const parcelasGroup = document.getElementById('parcelasGroup');
+                const boletosGroup = document.getElementById('boletosGroup');
+                
+                if (this.value === 'Cartão') {
+                    parcelasGroup.classList.remove('hidden');
+                    boletosGroup.classList.add('hidden');
+                } else if (this.value === 'Fatura Unificada') {
+                    parcelasGroup.classList.add('hidden');
+                    boletosGroup.classList.remove('hidden');
+                    document.getElementById('addBoleto').style.display = 'block';
+                } else {
+                    parcelasGroup.classList.add('hidden');
+                    boletosGroup.classList.add('hidden');
+                    document.getElementById('parcelas').value = '1';
+                }
+            });
+
+            document.getElementById('valor').addEventListener('input', calcularComissaoVenda);
+            document.getElementById('valorMarketing').addEventListener('input', calcularComissaoMarketing);
+            document.getElementById('tipoComissaoMkt').addEventListener('change', calcularComissaoMarketing);
+
+            // Adicionar boleto extra
+            document.getElementById('addBoleto').addEventListener('click', function() {
+                const container = document.getElementById('boletosContainer');
+                const boletoCount = container.querySelectorAll('.boleto-group').length;
+                
+                if (boletoCount < 3) {
+                    const newGroup = document.createElement('div');
+                    newGroup.className = 'boleto-group';
+                    newGroup.innerHTML = `
+                        <input type="url" class="linkBoleto" placeholder="https://exemplo.com/boleto${boletoCount + 1}">
+                        <span class="remove-boleto" onclick="removerBoleto(this)">✕</span>
+                    `;
+                    container.appendChild(newGroup);
+                    
+                    if (boletoCount === 2) {
+                        this.style.display = 'none';
+                    }
+                }
+            });
+
+            // Validação dos campos numéricos
+            document.getElementById('pedido').addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '');
+                if (this.value.length > 6) {
+                    this.value = this.value.slice(0, 6);
+                }
+            });
+
+            document.getElementById('nota').addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '');
+            });
+
+            document.getElementById('numeroPedidoMkt').addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '');
+                if (this.value.length > 6) {
+                    this.value = this.value.slice(0, 6);
+                }
+            });
+        }
+
+        function verificarLogin() {
+            // Em ambiente real, verificaria token/sessão
+            // Por enquanto, sempre mostra o login
+            mostrarLogin();
+        }
+
+        function mostrarLogin() {
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('userInfo').style.display = 'none';
+            document.getElementById('sidebar').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'none';
+        }
+
+        function mostrarSistema() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'flex';
+            document.getElementById('sidebar').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'block';
+            
+            // Configurar visibilidade inicial (dashboard)
+            filtrarTabela('dashboard');
+            
+            atualizarTabela();
+            atualizarResumo();
+            atualizarNotificacoesPendentes();
+            atualizarListaUsuarios();
+        }
+
+        function realizarLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const senha = document.getElementById('loginSenha').value;
+            const perfil = document.getElementById('loginPerfil').value;
+
+            // Buscar usuário
+            const usuario = usuarios.find(u => 
+                u.email === email && 
+                u.senha === senha && 
+                u.perfil === perfil
+            );
+
+            if (usuario) {
+                usuarioLogado = usuario;
+                
+                // Atualizar interface do usuário
+                document.getElementById('userAvatar').textContent = usuario.nome.charAt(0).toUpperCase();
+                document.getElementById('userName').textContent = usuario.nome;
+                document.getElementById('userRole').textContent = usuario.perfil;
+                
+                // Configurar permissões baseadas no perfil
+                configurarPermissoesPerfil();
+                
+                mostrarSistema();
+                mostrarAlerta(`Bem-vindo(a), ${usuario.nome}!`, 'success');
+                
+                // Limpar formulário
+                document.getElementById('loginForm').reset();
+            } else {
+                mostrarAlerta('Credenciais inválidas. Verifique email, senha e perfil.', 'error');
+            }
+        }
+
+        function configurarPermissoesPerfil() {
+            if (!usuarioLogado) return;
+
+            // Configurar visibilidade das comissões baseada no perfil
+            if (usuarioLogado.perfil === 'vendedora') {
+                // Ocultar colunas de comissão na tabela para vendedoras
+                const commissionColumns = document.querySelectorAll('.commission-column');
+                commissionColumns.forEach(col => {
+                    col.style.display = 'none';
+                });
+
+                // Ocultar resumos de comissão das outras vendedoras
+                if (usuarioLogado.nome !== 'Mayra') {
+                    document.getElementById('resumoMayra').style.display = 'none';
+                }
+                if (usuarioLogado.nome !== 'Liliane') {
+                    document.getElementById('resumoLiliane').style.display = 'none';
+                }
+
+                // Modificar os displays de comissão nos formulários
+                document.getElementById('comissaoVendaContainer').innerHTML = `
+                    <div class="commission-hidden" id="comissaoVenda">
+                        🔒 Comissão visível apenas para o setor financeiro
+                    </div>
+                `;
+                
+                document.getElementById('comissaoMarketingContainer').innerHTML = `
+                    <div class="commission-hidden" id="comissaoMarketing">
+                        🔒 Comissão visível apenas para o setor financeiro
+                    </div>
+                `;
+            } else {
+                // Admin e Financeiro veem tudo
+                const commissionColumns = document.querySelectorAll('.commission-column');
+                commissionColumns.forEach(col => {
+                    col.style.display = 'table-cell';
+                });
+
+                document.getElementById('resumoMayra').style.display = 'block';
+                document.getElementById('resumoLiliane').style.display = 'block';
+            }
+
+            // Se for vendedora, pré-selecionar seu nome no formulário
+            if (usuarioLogado.perfil === 'vendedora') {
+                document.getElementById('vendedora').value = usuarioLogado.nome;
+                document.getElementById('vendedora').disabled = true;
+            }
+
+            // Configurar permissões do admin (não pode ver vendas e marketing)
+            if (usuarioLogado.perfil === 'admin') {
+                document.getElementById('menuVendas').style.display = 'none';
+                document.getElementById('menuMarketing').style.display = 'none';
+            } else {
+                document.getElementById('menuVendas').style.display = 'flex';
+                document.getElementById('menuMarketing').style.display = 'flex';
+            }
+        }
+
+        function logout() {
+            usuarioLogado = null;
+            editandoId = null;
+            editandoTipo = null;
+            
+            // Limpar formulários
+            limparFormularioVenda();
+            limparFormularioMarketing();
+            
+            // Resetar permissões
+            const commissionColumns = document.querySelectorAll('.commission-column');
+            commissionColumns.forEach(col => {
+                col.style.display = 'table-cell';
+            });
+            
+            document.getElementById('resumoMayra').style.display = 'block';
+            document.getElementById('resumoLiliane').style.display = 'block';
+            document.getElementById('vendedora').disabled = false;
+            
+            // Restaurar displays de comissão originais
+            document.getElementById('comissaoVendaContainer').innerHTML = `
+                <div class="commission-display" id="comissaoVenda">
+                    Comissão da Venda: R$ 0,00 (3%)
+                </div>
+            `;
+            
+            document.getElementById('comissaoMarketingContainer').innerHTML = `
+                <div class="commission-display" id="comissaoMarketing">
+                    Comissão do Marketing: R$ 0,00 (0%) - Mayra: R$ 0,00 | Liliane: R$ 0,00
+                </div>
+            `;
+            
+            mostrarLogin();
+            mostrarAlerta('Logout realizado com sucesso!', 'success');
+        }
+
+        function atualizarNotificacoesPendentes() {
+            if (!usuarioLogado || usuarioLogado.perfil === 'vendedora') {
+                document.getElementById('pendingUpdates').style.display = 'none';
+                document.getElementById('notificationBadge').style.display = 'none';
+                return;
+            }
+
+            // Simular registros pendentes (marcados automaticamente quando vendedora cadastra)
+            const registrosPendentes = registros.filter(r => r.pendente_financeiro);
+            
+            if (registrosPendentes.length > 0) {
+                document.getElementById('pendingUpdates').style.display = 'block';
+                document.getElementById('notificationBadge').textContent = registrosPendentes.length;
+                document.getElementById('notificationBadge').style.display = 'block';
+                
+                const pendingList = document.getElementById('pendingList');
+                pendingList.innerHTML = registrosPendentes.map(registro => `
+                    <div class="pending-item">
+                        <div class="pending-info">
+                            <div class="pending-type">
+                                ${registro.tipo === 'venda' ? '🧾 Nova Venda' : '📦 Novo Marketing'} - Pedido: ${registro.pedido}
+                            </div>
+                            <div class="pending-details">
+                                Cliente: ${registro.nomeCliente} | Valor: R$ ${(registro.valor + (registro.valorMarketing || 0)).toFixed(2)}
+                            </div>
+                        </div>
+                        <button class="btn-approve" onclick="aprovarRegistro(${registro.id})">
+                            ✅ Processar
+                        </button>
+                    </div>
+                `).join('');
+            } else {
+                document.getElementById('pendingUpdates').style.display = 'none';
+                document.getElementById('notificationBadge').style.display = 'none';
+            }
+        }
+
+        function aprovarRegistro(id) {
+            const registro = registros.find(r => r.id === id);
+            if (registro) {
+                registro.pendente_financeiro = false;
+                atualizarNotificacoesPendentes();
+                atualizarTabela();
+                mostrarAlerta(`Registro do pedido ${registro.pedido} processado com sucesso!`, 'success');
+            }
+        }
+
+        function atualizarValorMarketing() {
+            const pacote = document.getElementById('pacote').value;
+            let valor = 0;
+            
+            switch(pacote) {
+                case 'Bronze':
+                    valor = 450;
+                    break;
+                case 'Prata':
+                    valor = 800;
+                    break;
+                case 'Ouro':
+                    valor = 1300;
+                    break;
+                case 'Diamante':
+                    valor = 2000;
+                    break;
+                default:
+                    valor = 0;
+            }
+            
+            document.getElementById('valorMarketing').value = valor;
+            calcularComissaoMarketing();
+        }
+
+        function removerBoleto(element) {
+            const container = document.getElementById('boletosContainer');
+            const groups = container.querySelectorAll('.boleto-group');
+            
+            if (groups.length > 1) {
+                element.parentNode.remove();
+                document.getElementById('addBoleto').style.display = 'block';
+            }
+        }
+
+        function calcularComissaoVenda() {
+            if (usuarioLogado && usuarioLogado.perfil === 'vendedora') {
+                return; // Não calcular para vendedoras
+            }
+            
+            const valor = parseFloat(document.getElementById('valor').value) || 0;
+            const comissaoVenda = valor * 0.03;
+            
+            const elementoComissao = document.getElementById('comissaoVenda');
+            if (elementoComissao) {
+                elementoComissao.textContent = `Comissão da Venda: R$ ${comissaoVenda.toFixed(2)} (3%)`;
+            }
+        }
+
+        function calcularComissaoMarketing() {
+            if (usuarioLogado && usuarioLogado.perfil === 'vendedora') {
+                return; // Não calcular para vendedoras
+            }
+            
+            const valorMarketing = parseFloat(document.getElementById('valorMarketing').value) || 0;
+            const tipoComissaoMkt = document.getElementById('tipoComissaoMkt').value;
+            
+            let percentualMkt = 0;
+            let descricaoMkt = '';
+            if (tipoComissaoMkt === 'mes1') {
+                percentualMkt = 0.10;
+                descricaoMkt = 'Mês 1 (início)';
+            } else if (tipoComissaoMkt === 'continuidade') {
+                percentualMkt = 0.05;
+                descricaoMkt = 'Meses seguintes (continuidade)';
+            }
+            
+            const comissaoMarketingTotal = valorMarketing * percentualMkt;
+            const comissaoMayra = comissaoMarketingTotal / 2;
+            const comissaoLiliane = comissaoMarketingTotal / 2;
+            
+            const elementoComissao = document.getElementById('comissaoMarketing');
+            if (elementoComissao) {
+                if (tipoComissaoMkt) {
+                    elementoComissao.textContent = 
+                        `Comissão do Marketing: R$ ${comissaoMarketingTotal.toFixed(2)} (${(percentualMkt * 100)}% - ${descricaoMkt}) - Mayra: R$ ${comissaoMayra.toFixed(2)} | Liliane: R$ ${comissaoLiliane.toFixed(2)}`;
+                } else {
+                    elementoComissao.textContent = 
+                        'Comissão do Marketing: R$ 0,00 (0%) - Mayra: R$ 0,00 | Liliane: R$ 0,00';
+                }
+            }
+        }
+
+        function salvarVenda() {
+            const camposVenda = ['dataPagamento', 'pedido', 'valor', 'nomeCliente', 'pagamento', 'vendedora'];
+            
+            for (let campo of camposVenda) {
+                const elemento = document.getElementById(campo);
+                if (!elemento.value.trim()) {
+                    elemento.focus();
+                    mostrarAlerta('Por favor, preencha todos os campos obrigatórios da venda.', 'error');
+                    return;
+                }
+            }
+
+            // Validação do pedido (6 dígitos)
+            const pedido = document.getElementById('pedido').value;
+            if (pedido.length !== 6) {
+                mostrarAlerta('O número do pedido deve ter exatamente 6 dígitos.', 'error');
+                document.getElementById('pedido').focus();
+                return;
+            }
+
+            // Validação da nota fiscal (opcional, mas se preenchida deve ter 4 dígitos)
+            const notaFiscal = document.getElementById('nota').value;
+            if (notaFiscal && notaFiscal.length !== 4) {
+                mostrarAlerta('Se informada, a nota fiscal deve ter exatamente 4 dígitos.', 'error');
+                document.getElementById('nota').focus();
+                return;
+            }
+
+            const valor = parseFloat(document.getElementById('valor').value);
+            const pagamento = document.getElementById('pagamento').value;
+            const parcelas = pagamento === 'Cartão' ? document.getElementById('parcelas').value : '-';
+            const comissaoVenda = valor * 0.03;
+            const produto = document.getElementById('produto').value || '-';
+            const nomeCliente = document.getElementById('nomeCliente').value;
+            
+            // Obter todos os links de boleto (se aplicável)
+            const boletos = [];
+            if (pagamento === 'Fatura Unificada') {
+                const boletoInputs = document.querySelectorAll('.linkBoleto');
+                boletoInputs.forEach(input => {
+                    if (input.value.trim()) {
+                        boletos.push(input.value.trim());
+                    }
+                });
+            }
+
+            const registro = {
+                id: editandoId || Date.now(),
+                tipo: 'venda',
+                dataPagamento: document.getElementById('dataPagamento').value,
+                pedido: pedido,
+                nota: notaFiscal || '-',
+                nomeCliente: nomeCliente,
+                produto: produto,
+                valor: valor,
+                pagamento: pagamento,
+                parcelas: parcelas,
+                vendedora: document.getElementById('vendedora').value,
+                comissaoVenda: comissaoVenda,
+                valorMarketing: 0,
+                pacote: '-',
+                tipoComissaoMkt: '-',
+                comissaoMarketingTotal: 0,
+                comissaoMayra: 0,
+                comissaoLiliane: 0,
+                percentualMkt: 0,
+                boletos: boletos,
+                pendente_financeiro: usuarioLogado?.perfil === 'vendedora' // Auto-marcar como pendente se for vendedora
+            };
+
+            if (editandoId && editandoTipo === 'venda') {
+                // Editando registro existente
+                const index = registros.findIndex(r => r.id === editandoId);
+                if (index !== -1) {
+                    registros[index] = registro;
+                }
+                editandoId = null;
+                editandoTipo = null;
+                document.querySelector('button[onclick="salvarVenda()"]').textContent = '💰 Salvar Venda';
+                mostrarAlerta('Venda atualizada com sucesso!', 'success');
+            } else {
+                // Novo registro
+                registros.push(registro);
+                mostrarAlerta('Venda salva com sucesso!', 'success');
+            }
+
+            limparFormularioVenda();
+            atualizarTabela();
+            atualizarResumo();
+            atualizarNotificacoesPendentes();
+        }
+
+        function salvarMarketing() {
+            const camposMarketing = ['numeroPedidoMkt', 'nomeClienteMkt', 'mesReferencia', 'valorMarketing', 'pacote', 'tipoComissaoMkt'];
+            
+            for (let campo of camposMarketing) {
+                const elemento = document.getElementById(campo);
+                if (!elemento.value.trim()) {
+                    elemento.focus();
+                    mostrarAlerta('Por favor, preencha todos os campos do marketing.', 'error');
+                    return;
+                }
+            }
+
+            // Validação do número do pedido (6 dígitos)
+            const numeroPedido = document.getElementById('numeroPedidoMkt').value;
+            if (numeroPedido.length !== 6) {
+                mostrarAlerta('O número do pedido deve ter exatamente 6 dígitos.', 'error');
+                document.getElementById('numeroPedidoMkt').focus();
+                return;
+            }
+
+            const valorMarketing = parseFloat(document.getElementById('valorMarketing').value);
+            const tipoComissaoMkt = document.getElementById('tipoComissaoMkt').value;
+            const nomeCliente = document.getElementById('nomeClienteMkt').value;
+            const mesReferencia = document.getElementById('mesReferencia').value;
+
+            let percentualMkt = 0;
+            let descricaoMkt = '';
+            if (tipoComissaoMkt === 'mes1') {
+                percentualMkt = 0.10;
+                descricaoMkt = 'Mês 1 (início)';
+            } else if (tipoComissaoMkt === 'continuidade') {
+                percentualMkt = 0.05;
+                descricaoMkt = 'Meses seguintes (continuidade)';
+            }
+            
+            const comissaoMarketingTotal = valorMarketing * percentualMkt;
+            const comissaoMayra = comissaoMarketingTotal / 2;
+            const comissaoLiliane = comissaoMarketingTotal / 2;
+
+            const registro = {
+                id: editandoId || Date.now(),
+                tipo: 'marketing',
+                dataPagamento: new Date().toISOString().split('T')[0],
+                pedido: numeroPedido,
+                nota: '-',
+                nomeCliente: nomeCliente,
+                produto: '-',
+                valor: 0,
+                pagamento: '-',
+                parcelas: '-',
+                vendedora: '-',
+                comissaoVenda: 0,
+                valorMarketing: valorMarketing,
+                pacote: document.getElementById('pacote').value,
+                tipoComissaoMkt: descricaoMkt,
+                comissaoMarketingTotal: comissaoMarketingTotal,
+                comissaoMayra: comissaoMayra,
+                comissaoLiliane: comissaoLiliane,
+                percentualMkt: percentualMkt * 100,
+                boletos: [],
+                mesReferencia: mesReferencia,
+                pendente_financeiro: usuarioLogado?.perfil === 'vendedora' // Auto-marcar como pendente se for vendedora
+            };
+
+            if (editandoId && editandoTipo === 'marketing') {
+                // Editando registro existente
+                const index = registros.findIndex(r => r.id === editandoId);
+                if (index !== -1) {
+                    registros[index] = registro;
+                }
+                editandoId = null;
+                editandoTipo = null;
+                document.querySelector('button[onclick="salvarMarketing()"]').textContent = '📦 Salvar Marketing';
+                mostrarAlerta('Marketing atualizado com sucesso!', 'success');
+            } else {
+                // Novo registro
+                registros.push(registro);
+                
+                // Gerar registro de histórico
+                const historico = {
+                    id: Date.now(),
+                    nomeCliente: nomeCliente,
+                    nomePacote: `MARKETING - PACOTE ${registro.pacote.toUpperCase()}`,
+                    mesReferencia: mesReferencia,
+                    valor: valorMarketing,
+                    dataRegistro: new Date().toISOString().split('T')[0]
+                };
+                
+                historicoMarketing.push(historico);
+                
+                mostrarAlerta('Marketing salvo com sucesso!', 'success');
+            }
+
+            limparFormularioMarketing();
+            atualizarTabela();
+            atualizarResumo();
+            atualizarNotificacoesPendentes();
+        }
+
+        function limparFormularioVenda() {
+            const camposVenda = ['pedido', 'nota', 'valor', 'produto', 'nomeCliente', 'pagamento', 'parcelas'];
+            camposVenda.forEach(campo => {
+                document.getElementById(campo).value = '';
+            });
+            
+            // Só limpar vendedora se não for uma vendedora logada
+            if (!usuarioLogado || usuarioLogado.perfil !== 'vendedora') {
+                document.getElementById('vendedora').value = '';
+            }
+            
+            // Limpar boletos
+            const boletosContainer = document.getElementById('boletosContainer');
+            boletosContainer.innerHTML = '<div class="boleto-group"><input type="url" class="linkBoleto" placeholder="https://exemplo.com/boleto1"></div>';
+            document.getElementById('addBoleto').style.display = 'none';
+            
+            // Manter a data de hoje
+            document.getElementById('dataPagamento').value = new Date().toISOString().split('T')[0];
+            document.getElementById('parcelasGroup').classList.add('hidden');
+            document.getElementById('boletosGroup').classList.add('hidden');
+            
+            if (usuarioLogado && usuarioLogado.perfil !== 'vendedora') {
+                document.getElementById('comissaoVenda').textContent = 'Comissão da Venda: R$ 0,00 (3%)';
+            }
+            
+            // Reset do modo de edição
+            editandoId = null;
+            editandoTipo = null;
+            document.querySelector('button[onclick="salvarVenda()"]').textContent = '💰 Salvar Venda';
+        }
+
+        function limparFormularioMarketing() {
+            const camposMarketing = ['numeroPedidoMkt', 'nomeClienteMkt', 'mesReferencia', 'valorMarketing', 'pacote', 'tipoComissaoMkt'];
+            camposMarketing.forEach(campo => {
+                document.getElementById(campo).value = '';
+            });
+            
+            if (usuarioLogado && usuarioLogado.perfil !== 'vendedora') {
+                document.getElementById('comissaoMarketing').textContent = 'Comissão do Marketing: R$ 0,00 (0%) - Mayra: R$ 0,00 | Liliane: R$ 0,00';
+            }
+            
+            // Reset do modo de edição
+            editandoId = null;
+            editandoTipo = null;
+            document.querySelector('button[onclick="salvarMarketing()"]').textContent = '📦 Salvar Marketing';
+        }
+
+        function formatarData(data) {
+            return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
+        }
+
+        function editarRegistro(id, tipo) {
+            const registro = registros.find(r => r.id === id);
+            if (!registro) return;
+
+            if (tipo === 'venda') {
+                // Mostrar a seção de vendas se estiver oculta
+                document.getElementById('formularioVenda').style.display = 'block';
+                document.getElementById('formularioMarketing').style.display = 'none';
+                document.getElementById('resumoFinanceiro').style.display = 'none';
+                document.getElementById('tabelaRegistrosSection').style.display = 'block';
+                document.getElementById('relatoriosSection').style.display = 'none';
+                document.getElementById('historicoMarketingSection').style.display = 'none';
+                document.getElementById('configuracoesSection').style.display = 'none';
+                
+                // Atualizar o menu ativo
+                document.querySelectorAll('.menu-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelector('.menu-item:nth-child(2)').classList.add('active');
+                
+                // Preencher o formulário com os dados do registro
+                document.getElementById('dataPagamento').value = registro.dataPagamento;
+                document.getElementById('pedido').value = registro.pedido;
+                document.getElementById('nota').value = registro.nota === '-' ? '' : registro.nota;
+                document.getElementById('nomeCliente').value = registro.nomeCliente;
+                document.getElementById('produto').value = registro.produto;
+                document.getElementById('valor').value = registro.valor;
+                document.getElementById('pagamento').value = registro.pagamento;
+                document.getElementById('vendedora').value = registro.vendedora;
+
+                // Preencher boletos
+                const boletosContainer = document.getElementById('boletosContainer');
+                boletosContainer.innerHTML = '';
+                
+                if (registro.boletos && registro.boletos.length > 0) {
+                    registro.boletos.forEach((boleto, index) => {
+                        const newGroup = document.createElement('div');
+                        newGroup.className = 'boleto-group';
+                        newGroup.innerHTML = `
+                            <input type="url" class="linkBoleto" placeholder="https://exemplo.com/boleto${index + 1}" value="${boleto}">
+                            ${index > 0 ? '<span class="remove-boleto" onclick="removerBoleto(this)">✕</span>' : ''}
+                        `;
+                        boletosContainer.appendChild(newGroup);
+                    });
+                    
+                    if (registro.boletos.length < 3) {
+                        document.getElementById('addBoleto').style.display = 'block';
+                    }
+                } else {
+                    boletosContainer.innerHTML = '<div class="boleto-group"><input type="url" class="linkBoleto" placeholder="https://exemplo.com/boleto1"></div>';
+                }
+
+                // Mostrar parcelas se for cartão
+                if (registro.pagamento === 'Cartão') {
+                    document.getElementById('parcelasGroup').classList.remove('hidden');
+                    document.getElementById('parcelas').value = registro.parcelas;
+                } else if (registro.pagamento === 'Fatura Unificada') {
+                    document.getElementById('boletosGroup').classList.remove('hidden');
+                }
+
+                // Calcular comissão
+                calcularComissaoVenda();
+
+                // Definir modo de edição
+                editandoId = id;
+                editandoTipo = 'venda';
+                document.querySelector('button[onclick="salvarVenda()"]').textContent = '✏️ Atualizar Venda';
+
+                // Scroll para o topo
+                window.scrollTo(0, 0);
+
+                mostrarAlerta('Registro de venda carregado para edição. Modifique os campos e clique em "Atualizar Venda".', 'success');
+            } else if (tipo === 'marketing') {
+                // Mostrar a seção de marketing se estiver oculta
+                document.getElementById('formularioVenda').style.display = 'none';
+                document.getElementById('formularioMarketing').style.display = 'block';
+                document.getElementById('resumoFinanceiro').style.display = 'none';
+                document.getElementById('tabelaRegistrosSection').style.display = 'block';
+                document.getElementById('relatoriosSection').style.display = 'none';
+                document.getElementById('historicoMarketingSection').style.display = 'none';
+                document.getElementById('configuracoesSection').style.display = 'none';
+                
+                // Atualizar o menu ativo
+                document.querySelectorAll('.menu-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelector('.menu-item:nth-child(3)').classList.add('active');
+                
+                // Preencher o formulário de marketing
+                document.getElementById('numeroPedidoMkt').value = registro.pedido;
+                document.getElementById('nomeClienteMkt').value = registro.nomeCliente;
+                document.getElementById('mesReferencia').value = registro.mesReferencia;
+                document.getElementById('valorMarketing').value = registro.valorMarketing;
+                document.getElementById('pacote').value = registro.pacote;
+                
+                // Determinar o tipo de comissão
+                let tipoComissao = '';
+                if (registro.tipoComissaoMkt.includes('início')) {
+                    tipoComissao = 'mes1';
+                } else if (registro.tipoComissaoMkt.includes('continuidade')) {
+                    tipoComissao = 'continuidade';
+                }
+                document.getElementById('tipoComissaoMkt').value = tipoComissao;
+                
+                // Calcular comissão
+                calcularComissaoMarketing();
+
+                // Definir modo de edição
+                editandoId = id;
+                editandoTipo = 'marketing';
+                document.querySelector('button[onclick="salvarMarketing()"]').textContent = '✏️ Atualizar Marketing';
+
+                // Scroll para o topo
+                window.scrollTo(0, 0);
+
+                mostrarAlerta('Registro de marketing carregado para edição. Modifique os campos e clique em "Atualizar Marketing".', 'success');
+            }
+        }
+
+        function filtrarTabela(tipo) {
+            filtroAtual = tipo;
+            
+            // Atualizar tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Atualizar menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            if (tipo === 'dashboard') {
+                // Mostrar apenas o resumo financeiro
+                document.getElementById('formularioVenda').style.display = 'none';
+                document.getElementById('formularioMarketing').style.display = 'none';
+                document.getElementById('resumoFinanceiro').style.display = 'block';
+                document.getElementById('tabelaRegistrosSection').style.display = 'none';
+                document.getElementById('relatoriosSection').style.display = 'none';
+                document.getElementById('historicoMarketingSection').style.display = 'none';
+                document.getElementById('configuracoesSection').style.display = 'none';
+                
+                // Ativar a tab do dashboard no menu
+                document.querySelector('.menu-item:nth-child(1)').classList.add('active');
+            } 
+            else if (tipo === 'vendas') {
+                // Mostrar apenas o formulário de vendas e tabela de vendas
+                document.getElementById('formularioVenda').style.display = 'block';
+                document.getElementById('formularioMarketing').style.display = 'none';
+                document.getElementById('resumoFinanceiro').style.display = 'none';
+                document.getElementById('tabelaRegistrosSection').style.display = 'block';
+                document.getElementById('relatoriosSection').style.display = 'none';
+                document.getElementById('historicoMarketingSection').style.display = 'none';
+                document.getElementById('configuracoesSection').style.display = 'none';
+                
+                // Ativar a tab de vendas
+                document.querySelector('.tab:nth-child(2)').classList.add('active');
+                
+                // Ativar o menu de vendas
+                document.querySelector('.menu-item:nth-child(2)').classList.add('active');
+            } 
+            else if (tipo === 'marketing') {
+                // Mostrar apenas o formulário de marketing e tabela de marketing
+                document.getElementById('formularioVenda').style.display = 'none';
+                document.getElementById('formularioMarketing').style.display = 'block';
+                document.getElementById('resumoFinanceiro').style.display = 'none';
+                document.getElementById('tabelaRegistrosSection').style.display = 'block';
+                document.getElementById('relatoriosSection').style.display = 'none';
+                document.getElementById('historicoMarketingSection').style.display = 'none';
+                document.getElementById('configuracoesSection').style.display = 'none';
+                
+                // Ativar a tab de marketing
+                document.querySelector('.tab:nth-child(3)').classList.add('active');
+                
+                // Ativar o menu de marketing
+                document.querySelector('.menu-item:nth-child(3)').classList.add('active');
+            }
+            else if (tipo === 'todos') {
+                // Mostrar tudo (para as tabs dentro da seção de registros)
+                document.getElementById('formularioVenda').style.display = 'none';
+                document.getElementById('formularioMarketing').style.display = 'none';
+                document.getElementById('resumoFinanceiro').style.display = 'none';
+                document.getElementById('tabelaRegistrosSection').style.display = 'block';
+                document.getElementById('relatoriosSection').style.display = 'none';
+                document.getElementById('historicoMarketingSection').style.display = 'none';
+                document.getElementById('configuracoesSection').style.display = 'none';
+                
+                // Ativar a tab "Todos"
+                document.querySelector('.tab:nth-child(1)').classList.add('active');
+            }
+            else if (tipo === 'relatorios') {
+                // Mostrar apenas a seção de relatórios
+                document.getElementById('formularioVenda').style.display = 'none';
+                document.getElementById('formularioMarketing').style.display = 'none';
+                document.getElementById('resumoFinanceiro').style.display = 'none';
+                document.getElementById('tabelaRegistrosSection').style.display = 'none';
+                document.getElementById('relatoriosSection').style.display = 'block';
+                document.getElementById('historicoMarketingSection').style.display = 'none';
+                document.getElementById('configuracoesSection').style.display = 'none';
+                
+                // Ativar o menu de relatórios
+                document.querySelector('.menu-item:nth-child(4)').classList.add('active');
+                
+                atualizarRelatorios();
+            }
+            
+            atualizarTabela();
+        }
+
+        function mostrarHistorico() {
+            document.getElementById('formularioVenda').style.display = 'none';
+            document.getElementById('formularioMarketing').style.display = 'none';
+            document.getElementById('resumoFinanceiro').style.display = 'none';
+            document.getElementById('tabelaRegistrosSection').style.display = 'none';
+            document.getElementById('relatoriosSection').style.display = 'none';
+            document.getElementById('historicoMarketingSection').style.display = 'block';
+            document.getElementById('configuracoesSection').style.display = 'none';
+            
+            // Ativar o menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector('.menu-item:nth-child(5)').classList.add('active');
+            
+            // Carregar dados
+            carregarHistorico();
+        }
+
+        function mostrarConfiguracoes() {
+            document.getElementById('formularioVenda').style.display = 'none';
+            document.getElementById('formularioMarketing').style.display = 'none';
+            document.getElementById('resumoFinanceiro').style.display = 'none';
+            document.getElementById('tabelaRegistrosSection').style.display = 'none';
+            document.getElementById('relatoriosSection').style.display = 'none';
+            document.getElementById('historicoMarketingSection').style.display = 'none';
+            document.getElementById('configuracoesSection').style.display = 'block';
+            
+            // Ativar o menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector('.menu-item:nth-child(6)').classList.add('active');
+            
+            // Mostrar a aba de usuários por padrão
+            mostrarConfigTab('usuarios');
+        }
+
+        function mostrarConfigTab(tab) {
+            // Desativar todas as abas
+            document.querySelectorAll('.config-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.config-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Ativar a aba selecionada
+            if (tab === 'usuarios') {
+                document.getElementById('configUsuarios').classList.add('active');
+                document.querySelector('.config-tab:nth-child(1)').classList.add('active');
+            } else if (tab === 'parametros') {
+                document.getElementById('configParametros').classList.add('active');
+                document.querySelector('.config-tab:nth-child(2)').classList.add('active');
+            }
+        }
+
+        function carregarHistorico(filtro = '') {
+            const tbody = document.getElementById('tabelaHistoricoBody');
+            let registrosFiltrados = historicoMarketing;
+            
+            if (filtro) {
+                registrosFiltrados = historicoMarketing.filter(reg => 
+                    reg.nomeCliente.toLowerCase().includes(filtro.toLowerCase())
+                );
+            }
+            
+            if (registrosFiltrados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="no-data">Nenhum registro encontrado</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = registrosFiltrados.map(reg => `
+                <tr>
+                    <td>${reg.nomeCliente}</td>
+                    <td>${reg.nomePacote}</td>
+                    <td>${reg.mesReferencia}</td>
+                    <td>R$ ${reg.valor.toFixed(2)}</td>
+                    <td>${formatarData(reg.dataRegistro)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function filtrarHistorico() {
+            const filtro = document.getElementById('filtroCliente').value;
+            carregarHistorico(filtro);
+        }
+
+        function atualizarTabela() {
+            const tbody = document.getElementById('tabelaBody');
+            
+            // Filtrar registros conforme o filtro atual e perfil do usuário
+            let registrosFiltrados = [];
+            
+            if (usuarioLogado && usuarioLogado.perfil === 'vendedora') {
+                // Vendedoras veem apenas seus próprios registros
+                if (filtroAtual === 'dashboard' || filtroAtual === 'todos') {
+                    registrosFiltrados = registros.filter(r => r.vendedora === usuarioLogado.nome || r.tipo === 'marketing');
+                } else if (filtroAtual === 'vendas') {
+                    registrosFiltrados = registros.filter(r => r.tipo === 'venda' && r.vendedora === usuarioLogado.nome);
+                } else if (filtroAtual === 'marketing') {
+                    registrosFiltrados = registros.filter(r => r.tipo === 'marketing');
+                }
+            } else {
+                // Admin e Financeiro veem todos os registros
+                if (filtroAtual === 'dashboard' || filtroAtual === 'todos') {
+                    registrosFiltrados = registros;
+                } else if (filtroAtual === 'vendas') {
+                    registrosFiltrados = registros.filter(r => r.tipo === 'venda');
+                } else if (filtroAtual === 'marketing') {
+                    registrosFiltrados = registros.filter(r => r.tipo === 'marketing');
+                }
+            }
+
+            if (registrosFiltrados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="19" class="no-data">Nenhum registro encontrado</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = registrosFiltrados.map(registro => {
+                const isVendedora = usuarioLogado && usuarioLogado.perfil === 'vendedora';
+                
+                return `
+                    <tr class="${registro.tipo}">
+                        <td>${registro.tipo === 'venda' ? '🧾 Venda' : '📦 Marketing'}${registro.pendente_financeiro ? ' <span style="color: orange;">⏳</span>' : ''}</td>
+                        <td>${registro.pedido}</td>
+                        <td>${registro.nota}</td>
+                        <td>${registro.nomeCliente || '-'}</td>
+                        <td>${registro.produto}</td>
+                        <td>${registro.valor > 0 ? `R$ ${registro.valor.toFixed(2)}` : '-'}</td>
+                        <td>${registro.pagamento}</td>
+                        <td>${registro.parcelas}</td>
+                        <td>${registro.vendedora}</td>
+                        <td class="commission-column">${isVendedora ? '🔒' : (registro.comissaoVenda > 0 ? `R$ ${registro.comissaoVenda.toFixed(2)}` : '-')}</td>
+                        <td>${registro.valorMarketing > 0 ? `R$ ${registro.valorMarketing.toFixed(2)}` : '-'}</td>
+                        <td>${registro.pacote}</td>
+                        <td>${registro.tipoComissaoMkt}</td>
+                        <td class="commission-column">${isVendedora ? '🔒' : (registro.comissaoMarketingTotal > 0 ? `R$ ${registro.comissaoMarketingTotal.toFixed(2)} (${registro.percentualMkt}%)` : '-')}</td>
+                        <td class="commission-column">${isVendedora ? '🔒' : (registro.comissaoMayra > 0 ? `R$ ${registro.comissaoMayra.toFixed(2)}` : '-')}</td>
+                        <td class="commission-column">${isVendedora ? '🔒' : (registro.comissaoLiliane > 0 ? `R$ ${registro.comissaoLiliane.toFixed(2)}` : '-')}</td>
+                        <td>
+                            ${registro.boletos && registro.boletos.length > 0 ? 
+                                `<div class="links-container">
+                                    ${registro.boletos.map((boleto, index) => `
+                                        <div class="link-item">
+                                            <div class="link-display" title="${boleto}">
+                                                <a href="${boleto}" target="_blank" style="color: #3498db; text-decoration: none;">
+                                                    🔗 Boleto ${index + 1}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>` : 
+                                '-'
+                            }
+                        </td>
+                        <td>${formatarData(registro.dataPagamento)}</td>
+                        <td>
+                            ${(usuarioLogado && (usuarioLogado.perfil !== 'vendedora' || registro.vendedora === usuarioLogado.nome || registro.tipo === 'marketing')) ? `
+                                <button class="${registro.tipo === 'venda' ? 'btn btn-edit' : 'btn btn-mkt-edit'}" onclick="editarRegistro(${registro.id}, '${registro.tipo}')">
+                                    ✏️ Editar
+                                </button>
+                                <button class="btn btn-delete" onclick="excluirRegistro(${registro.id})">
+                                    🗑️ Excluir
+                                </button>
+                            ` : ''}
+                            ${registro.boletos && registro.boletos.length > 0 ? 
+                                registro.boletos.map((boleto, index) => `
+                                    <button class="btn btn-link" onclick="abrirLink('${boleto}')">
+                                        🔗 ${index + 1}
+                                    </button>
+                                `).join('') : 
+                                ''
+                            }
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function atualizarResumo() {
+            let totalVendas = 0;
+            let comissaoVendaMayra = 0;
+            let comissaoVendaLiliane = 0;
+            let comissaoMktMayra = 0;
+            let comissaoMktLiliane = 0;
+
+            // Filtrar registros baseado no perfil do usuário
+            let registrosParaCalcular = registros;
+            if (usuarioLogado && usuarioLogado.perfil === 'vendedora') {
+                registrosParaCalcular = registros.filter(r => 
+                    r.vendedora === usuarioLogado.nome || r.tipo === 'marketing'
+                );
+            }
+
+            registrosParaCalcular.forEach(registro => {
+                totalVendas += registro.valor + (registro.valorMarketing || 0);
+                
+                if (registro.vendedora === 'Mayra') {
+                    comissaoVendaMayra += registro.comissaoVenda;
+                } else if (registro.vendedora === 'Liliane') {
+                    comissaoVendaLiliane += registro.comissaoVenda;
+                }
+                
+                comissaoMktMayra += registro.comissaoMayra || 0;
+                comissaoMktLiliane += registro.comissaoLiliane || 0;
+            });
+
+            const comissaoTotalMayra = comissaoVendaMayra + comissaoMktMayra;
+            const comissaoTotalLiliane = comissaoVendaLiliane + comissaoMktLiliane;
+            const totalComissoes = comissaoTotalMayra + comissaoTotalLiliane;
+
+            document.getElementById('totalVendas').textContent = `R$ ${totalVendas.toFixed(2)}`;
+            
+            // Para vendedoras, mostrar apenas suas próprias comissões
+            if (usuarioLogado && usuarioLogado.perfil === 'vendedora') {
+                if (usuarioLogado.nome === 'Mayra') {
+                    document.getElementById('comissaoTotalMayra').textContent = `R$ ${comissaoTotalMayra.toFixed(2)}`;
+                    document.getElementById('comissaoVendaMayra').textContent = `R$ ${comissaoVendaMayra.toFixed(2)}`;
+                    document.getElementById('comissaoMktMayra').textContent = `R$ ${comissaoMktMayra.toFixed(2)}`;
+                    
+                    // Ocultar dados da Liliane
+                    document.getElementById('comissaoTotalLiliane').textContent = '🔒 Restrito';
+                    document.getElementById('comissaoVendaLiliane').textContent = '🔒';
+                    document.getElementById('comissaoMktLiliane').textContent = '🔒';
+                } else if (usuarioLogado.nome === 'Liliane') {
+                    document.getElementById('comissaoTotalLiliane').textContent = `R$ ${comissaoTotalLiliane.toFixed(2)}`;
+                    document.getElementById('comissaoVendaLiliane').textContent = `R$ ${comissaoVendaLiliane.toFixed(2)}`;
+                    document.getElementById('comissaoMktLiliane').textContent = `R$ ${comissaoMktLiliane.toFixed(2)}`;
+                    
+                    // Ocultar dados da Mayra
+                    document.getElementById('comissaoTotalMayra').textContent = '🔒 Restrito';
+                    document.getElementById('comissaoVendaMayra').textContent = '🔒';
+                    document.getElementById('comissaoMktMayra').textContent = '🔒';
+                }
+                
+                document.getElementById('totalComissoes').textContent = '🔒 Restrito';
+            } else {
+                // Admin e Financeiro veem tudo
+                document.getElementById('comissaoTotalMayra').textContent = `R$ ${comissaoTotalMayra.toFixed(2)}`;
+                document.getElementById('comissaoTotalLiliane').textContent = `R$ ${comissaoTotalLiliane.toFixed(2)}`;
+                document.getElementById('totalComissoes').textContent = `R$ ${totalComissoes.toFixed(2)}`;
+                
+                document.getElementById('comissaoVendaMayra').textContent = `R$ ${comissaoVendaMayra.toFixed(2)}`;
+                document.getElementById('comissaoVendaLiliane').textContent = `R$ ${comissaoVendaLiliane.toFixed(2)}`;
+                document.getElementById('comissaoMktMayra').textContent = `R$ ${comissaoMktMayra.toFixed(2)}`;
+                document.getElementById('comissaoMktLiliane').textContent = `R$ ${comissaoMktLiliane.toFixed(2)}`;
+            }
+        }
+
+        function atualizarRelatorios() {
+            const container = document.getElementById('relatoriosContainer');
+            
+            if (relatorios.length === 0) {
+                container.innerHTML = '<div class="no-data">Nenhum relatório gerado ainda</div>';
+                return;
+            }
+            
+            container.innerHTML = relatorios.map((relatorio, index) => `
+                <div class="relatorio-item">
+                    <div class="relatorio-info">
+                        <div class="relatorio-title">Relatório de Vendas e Marketing</div>
+                        <div class="relatorio-date">Gerado em: ${formatarData(relatorio.data)}</div>
+                    </div>
+                    <div class="relatorio-actions">
+                        <button class="btn btn-relatorio" onclick="baixarRelatorioExcel(${index})">
+                            📊 Excel
+                        </button>
+                        <button class="btn btn-pdf" onclick="baixarRelatorioPDF(${index})">
+                            📄 PDF
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function atualizarListaUsuarios() {
+            const tbody = document.getElementById('tabelaUsuarios');
+            
+            // Filtrar usuários (não mostrar o admin)
+            const usuariosFiltrados = usuarios.filter(u => u.perfil !== 'admin');
+            
+            if (usuariosFiltrados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="no-data">Nenhum usuário cadastrado</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = usuariosFiltrados.map(usuario => `
+                <tr>
+                    <td>${usuario.nome}</td>
+                    <td>${usuario.email}</td>
+                    <td>${usuario.perfil}</td>
+                    <td>
+                        ${usuarioLogado && usuarioLogado.perfil === 'admin' ? `
+                            <button class="btn btn-delete" onclick="excluirUsuario(${usuario.id})">
+                                🗑️ Excluir
+                            </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function cadastrarUsuario() {
+            if (!usuarioLogado || usuarioLogado.perfil !== 'admin') {
+                mostrarAlerta('Apenas administradores podem cadastrar novos usuários.', 'error');
+                return;
+            }
+            
+            const nome = document.getElementById('novoUsuarioNome').value.trim();
+            const email = document.getElementById('novoUsuarioEmail').value.trim();
+            const senha = document.getElementById('novoUsuarioSenha').value.trim();
+            const perfil = document.getElementById('novoUsuarioPerfil').value;
+            
+            if (!nome || !email || !senha || !perfil) {
+                mostrarAlerta('Por favor, preencha todos os campos para cadastrar um novo usuário.', 'error');
+                return;
+            }
+            
+            // Verificar se o email já existe
+            if (usuarios.some(u => u.email === email)) {
+                mostrarAlerta('Já existe um usuário cadastrado com este email.', 'error');
+                return;
+            }
+            
+            // Criar novo usuário
+            const novoUsuario = {
+                id: Date.now(),
+                nome: nome,
+                email: email,
+                senha: senha,
+                perfil: perfil
+            };
+            
+            usuarios.push(novoUsuario);
+            atualizarListaUsuarios();
+            
+            // Limpar formulário
+            document.getElementById('novoUsuarioNome').value = '';
+            document.getElementById('novoUsuarioEmail').value = '';
+            document.getElementById('novoUsuarioSenha').value = '';
+            document.getElementById('novoUsuarioPerfil').value = '';
+            
+            mostrarAlerta('Usuário cadastrado com sucesso!', 'success');
+        }
+
+        function excluirUsuario(id) {
+            if (!usuarioLogado || usuarioLogado.perfil !== 'admin') {
+                mostrarAlerta('Apenas administradores podem excluir usuários.', 'error');
+                return;
+            }
+            
+            if (confirm('Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.')) {
+                usuarios = usuarios.filter(u => u.id !== id);
+                atualizarListaUsuarios();
+                mostrarAlerta('Usuário excluído com sucesso!', 'success');
+            }
+        }
+
+        function excluirRegistro(id) {
+            if (confirm('Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.')) {
+                const indexAntes = registros.length;
+                registros = registros.filter(registro => registro.id !== id);
+                
+                if (registros.length < indexAntes) {
+                    mostrarAlerta('Registro excluído com sucesso!', 'success');
+                    
+                    // Se estava editando o registro que foi excluído, limpar o formulário
+                    if (editandoId === id) {
+                        if (editandoTipo === 'venda') {
+                            limparFormularioVenda();
+                        } else if (editandoTipo === 'marketing') {
+                            limparFormularioMarketing();
+                        }
+                    }
+                    
+                    atualizarTabela();
+                    atualizarResumo();
+                    atualizarNotificacoesPendentes();
+                } else {
+                    mostrarAlerta('Erro ao excluir o registro.', 'error');
+                }
+            }
+        }
+
+        function abrirLink(url) {
+            if (url) {
+                window.open(url, '_blank');
+            }
+        }
+
+        function gerarRelatorio() {
+            if (registros.length === 0) {
+                mostrarAlerta('Não há dados para gerar o relatório.', 'error');
+                return;
+            }
+
+            const dataAtual = new Date().toISOString().split('T')[0];
+            
+            // Filtrar registros baseado no perfil do usuário
+            let registrosRelatorio = registros;
+            if (usuarioLogado && usuarioLogado.perfil === 'vendedora') {
+                registrosRelatorio = registros.filter(r => 
+                    r.vendedora === usuarioLogado.nome || r.tipo === 'marketing'
+                );
+            }
+
+            const novoRelatorio = {
+                id: Date.now(),
+                data: dataAtual,
+                registros: [...registrosRelatorio],
+                geradoPor: usuarioLogado ? usuarioLogado.nome : 'Desconhecido'
+            };
+            
+            relatorios.unshift(novoRelatorio); // Adiciona no início do array
+            atualizarRelatorios();
+            
+            mostrarAlerta('Relatório gerado com sucesso! Agora você pode baixá-lo nos formatos Excel ou PDF.', 'success');
+        }
+
+        function baixarRelatorioExcel(index) {
+            if (index === undefined || !relatorios[index]) {
+                mostrarAlerta('Relatório não encontrado.', 'error');
+                return;
+            }
+            
+            const relatorio = relatorios[index];
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Tipo,Pedido,Nota Fiscal,Cliente,Produto,Valor Total,Pagamento,Parcelas,Vendedora,Comissão Venda,Valor MKT,Pacote,Tipo Comissão MKT,Comissão MKT Total,Mayra MKT,Liliane MKT,Boletos,Data Pagamento\n";
+            
+            relatorio.registros.forEach(registro => {
+                const isVendedora = usuarioLogado && usuarioLogado.perfil === 'vendedora';
+                
+                const linha = [
+                    registro.tipo === 'venda' ? 'Venda' : 'Marketing',
+                    registro.pedido,
+                    registro.nota,
+                    registro.nomeCliente || '-',
+                    registro.produto,
+                    registro.valor > 0 ? `R$ ${registro.valor.toFixed(2)}` : '-',
+                    registro.pagamento,
+                    registro.parcelas,
+                    registro.vendedora,
+                    isVendedora ? 'RESTRITO' : (registro.comissaoVenda > 0 ? `R$ ${registro.comissaoVenda.toFixed(2)}` : '-'),
+                    registro.valorMarketing > 0 ? `R$ ${registro.valorMarketing.toFixed(2)}` : '-',
+                    registro.pacote,
+                    registro.tipoComissaoMkt,
+                    isVendedora ? 'RESTRITO' : (registro.comissaoMarketingTotal > 0 ? `R$ ${registro.comissaoMarketingTotal.toFixed(2)}` : '-'),
+                    isVendedora ? 'RESTRITO' : (registro.comissaoMayra > 0 ? `R$ ${registro.comissaoMayra.toFixed(2)}` : '-'),
+                    isVendedora ? 'RESTRITO' : (registro.comissaoLiliane > 0 ? `R$ ${registro.comissaoLiliane.toFixed(2)}` : '-'),
+                    registro.boletos && registro.boletos.length > 0 ? registro.boletos.join(' | ') : '-',
+                    formatarData(registro.dataPagamento)
+                ].map(campo => `"${campo}"`).join(',');
+                
+                csvContent += linha + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `relatorio_vendas_${relatorio.data}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function baixarRelatorioPDF(index) {
+            if (index === undefined || !relatorios[index]) {
+                mostrarAlerta('Relatório não encontrado.', 'error');
+                return;
+            }
+            
+            const relatorio = relatorios[index];
+            const isVendedora = usuarioLogado && usuarioLogado.perfil === 'vendedora';
+            
+            // Criar um HTML formatado para o PDF
+            let htmlContent = `
+                <html>
+                    <head>
+                        <title>Relatório de Vendas e Marketing - ${relatorio.data}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            h1 { color: #2c3e50; text-align: center; }
+                            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                            th { background-color: #34495e; color: white; padding: 10px; text-align: left; }
+                            td { padding: 8px; border-bottom: 1px solid #ddd; }
+                            tr:nth-child(even) { background-color: #f2f2f2; }
+                            .total { font-weight: bold; margin-top: 20px; }
+                            .restricted { color: #e74c3c; font-style: italic; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>Relatório de Vendas e Marketing</h1>
+                        <p>Data do relatório: ${formatarData(relatorio.data)}</p>
+                        <p>Gerado por: ${relatorio.geradoPor}</p>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Pedido</th>
+                                    <th>Cliente</th>
+                                    <th>Produto</th>
+                                    <th>Valor</th>
+                                    <th>Pagamento</th>
+                                    <th>Vendedora</th>
+                                    ${isVendedora ? '' : '<th>Comissão</th>'}
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            // Adicionar linhas da tabela
+            let totalVendas = 0;
+            let totalComissoes = 0;
+            
+            relatorio.registros.forEach(registro => {
+                totalVendas += registro.valor;
+                if (!isVendedora) {
+                    totalComissoes += registro.comissaoVenda;
+                }
+                
+                htmlContent += `
+                    <tr>
+                        <td>${registro.tipo === 'venda' ? 'Venda' : 'Marketing'}</td>
+                        <td>${registro.pedido}</td>
+                        <td>${registro.nomeCliente || '-'}</td>
+                        <td>${registro.produto}</td>
+                        <td>R$ ${registro.valor.toFixed(2)}</td>
+                        <td>${registro.pagamento}</td>
+                        <td>${registro.vendedora}</td>
+                        ${isVendedora ? '' : `<td>R$ ${registro.comissaoVenda.toFixed(2)}</td>`}
+                        <td>${formatarData(registro.dataPagamento)}</td>
+                    </tr>
+                `;
+            });
+            
+            htmlContent += `
+                            </tbody>
+                        </table>
+                        
+                        <div class="total">
+                            <p>Total em Vendas: R$ ${totalVendas.toFixed(2)}</p>
+                            ${isVendedora ? '<p class="restricted">Dados de comissão restritos para vendedoras</p>' : `<p>Total em Comissões: R$ ${totalComissoes.toFixed(2)}</p>`}
+                        </div>
+                    </body>
+                </html>
+            `;
+            
+            // Em um ambiente real, aqui você usaria uma biblioteca como jsPDF para gerar o PDF
+            // Esta é apenas uma simulação que abre uma nova janela com o HTML formatado
+            const janela = window.open('', '_blank');
+            janela.document.write(htmlContent);
+            janela.document.close();
+            
+            mostrarAlerta('Para gerar o PDF em um ambiente real, utilize uma biblioteca como jsPDF. Esta é apenas uma pré-visualização.', 'success');
+        }
+
+        function mostrarAlerta(mensagem, tipo) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertClass = tipo === 'success' ? 'alert-success' : 'alert-error';
+            
+            alertContainer.innerHTML = `
+                <div class="alert ${alertClass}">
+                    ${mensagem}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Funções de demonstração para adicionar dados de exemplo
+        function adicionarDadosExemplo() {
+            // Dados de exemplo para demonstração
+            const exemploVenda = {
+                id: 1001,
+                tipo: 'venda',
+                dataPagamento: '2024-01-15',
+                pedido: '123456',
+                nota: '5678',
+                nomeCliente: 'João Silva',
+                produto: 'Sistema de Gestão Premium',
+                valor: 5000,
+                pagamento: 'PIX',
+                parcelas: '1',
+                vendedora: 'Mayra',
+                comissaoVenda: 150,
+                valorMarketing: 0,
+                pacote: '-',
+                tipoComissaoMkt: '-',
+                comissaoMarketingTotal: 0,
+                comissaoMayra: 0,
+                comissaoLiliane: 0,
+                percentualMkt: 0,
+                boletos: [],
+                pendente_financeiro: true
+            };
+
+            const exemploMarketing = {
+                id: 1002,
+                tipo: 'marketing',
+                dataPagamento: '2024-01-16',
+                pedido: '654321',
+                nota: '-',
+                nomeCliente: 'Maria Santos',
+                produto: '-',
+                valor: 0,
+                pagamento: '-',
+                parcelas: '-',
+                vendedora: '-',
+                comissaoVenda: 0,
+                valorMarketing: 800,
+                pacote: 'Prata',
+                tipoComissaoMkt: 'Mês 1 (início)',
+                comissaoMarketingTotal: 80,
+                comissaoMayra: 40,
+                comissaoLiliane: 40,
+                percentualMkt: 10,
+                boletos: [],
+                mesReferencia: 'Janeiro',
+                pendente_financeiro: true
+            };
+
+            registros.push(exemploVenda, exemploMarketing);
+            
+            // Adicionar ao histórico
+            historicoMarketing.push({
+                id: 1002,
+                nomeCliente: 'Maria Santos',
+                nomePacote: 'MARKETING - PACOTE PRATA',
+                mesReferencia: 'Janeiro',
+                valor: 800,
+                dataRegistro: '2024-01-16'
+            });
+        }
+
+        // Adicionar dados de exemplo na inicialização (apenas para demonstração)
+        // Em produção, remover esta linha
+        setTimeout(() => {
+            if (registros.length === 0) {
+                adicionarDadosExemplo();
+                atualizarTabela();
+                atualizarResumo();
+                atualizarNotificacoesPendentes();
+            }
+        }, 1000);
+
+    </script>
+</body>
+</html>
